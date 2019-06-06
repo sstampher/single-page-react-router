@@ -1,0 +1,103 @@
+<html>
+  <head>
+    <style></style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.18.0/axios.js"></script>
+    <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+    <script
+      src="https://unpkg.com/react@16/umd/react.development.js"
+      crossorigin
+    ></script>
+    <script
+      src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"
+      crossorigin
+    ></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react-router-dom/5.0.0/react-router-dom.js"></script>
+  </head>
+
+  <body>
+    <div id="root"></div>
+    <script type="text/babel">
+
+    const {Route, HashRouter, Link} = ReactRouterDOM
+
+
+        function Nav(){
+            return(
+                <div id="nav">
+                    <Link to='/Home'>Home</Link>
+                    <Link to='/Things'>Things</Link>
+                    <Link to='/AddThing'>Add Thing</Link>
+                </div>
+            )
+        }
+
+        class Things extends React.Component{
+
+            constructor(){
+                super();
+
+                this.handleClick = this.handleClick.bind(this);
+            }
+
+            handleClick(e){
+                e.preventDefault();
+                console.log('e target value  ', e.target.innerHTML, 'name  ', e.target.name )
+                console.log(e.target.innerHTML);
+                return this.props.deleteThing(e.target.innerHTML, Number(e.target.name))
+            }
+
+            render(){
+                return(
+                    <div id='things'>
+                        {this.props.things.map((item,idx) => <li><a href={`${idx}`} name={`${idx}`} onClick={this.handleClick}>{item}</a></li>)}
+                    </div>
+                )
+            }
+            
+
+        }
+
+        class Main extends React.Component{
+
+            constructor(){
+                super()
+                this.state ={
+                    things: ['yo','hi','poopies']
+                }
+                this.addThing = this.addThing.bind(this);
+                this.deleteThing = this.deleteThing.bind(this);
+            }
+
+            deleteThing(thing, idx){
+                const deleted = this.state.things.filter((item, _idx) => {console.log(_idx, idx); return _idx !== idx});
+                console.log(deleted);
+                this.setState({
+                    things: deleted
+                })
+            }
+
+            addThing(thing){
+                return null;
+            }
+
+            render(){
+                return(
+                    <HashRouter>
+                        <Nav />
+                        <Route path='/Home'/>
+                        <Route path='/Things' render = {() => <Things things={this.state.things} deleteThing={this.deleteThing}/>}/>
+                        <Route path='/AddThing'/>
+                    </HashRouter>  
+                 )
+            }
+        }
+
+
+
+
+
+      const root = document.querySelector("#root");
+      ReactDOM.render(<Main />, root);
+    </script>
+  </body>
+</html>
